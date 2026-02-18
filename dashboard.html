@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DSR Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">DSR</div>
+
+      <div class="user-nav">
+        <span>Atishay</span>
+        <button class="logout-btn">Logout</button>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="left-panel">
+        <div class="card">
+          <h3>My Tasks</h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Hours</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>#101</td>
+                <td>API Integration</td>
+
+                <td>
+                  <span class="status in-progress"> In Progress </span>
+                </td>
+
+                <td>5h</td>
+              </tr>
+
+              <tr>
+                <td>#102</td>
+                <td>UI Fixes</td>
+
+                <td>
+                  <span class="status completed"> Completed </span>
+                </td>
+
+                <td>3h</td>
+              </tr>
+
+              <tr>
+                <td>#103</td>
+                <td>Bug Testing</td>
+
+                <td>
+                  <span class="status pending"> Pending </span>
+                </td>
+
+                <td>2h</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h3>My Bugs</h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Bug</th>
+                <th>Status</th>
+                <th>Priority</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>#201</td>
+                <td>Login Crash</td>
+
+                <td>
+                  <span class="status open"> Open </span>
+                </td>
+
+                <td>
+                  <span class="priority high"> High </span>
+                </td>
+              </tr>
+
+              <tr>
+                <td>#202</td>
+                <td>UI Overflow</td>
+
+                <td>
+                  <span class="status in-progress"> In Progress </span>
+                </td>
+
+                <td>
+                  <span class="priority medium"> Medium </span>
+                </td>
+              </tr>
+
+              <tr>
+                <td>#203</td>
+                <td>API Timeout</td>
+
+                <td>
+                  <span class="status resolved"> Resolved </span>
+                </td>
+
+                <td>
+                  <span class="priority low"> Low </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="card action-card">
+          <button class="action-btn task">+ Create Task</button>
+
+          <button class="action-btn side">+ Side Task</button>
+
+          <button class="action-btn client">+ Client Task</button>
+
+          <button class="action-btn bug">+ Create Bug</button>
+
+          <button class="send-btn">Send Report to Admin</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
