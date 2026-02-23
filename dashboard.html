@@ -37,7 +37,7 @@
             </thead>
 
             <tbody>
-              <tr>
+              <tr onclick="openDetail(this, 'task')">
                 <td>#101</td>
                 <td>API Integration</td>
 
@@ -48,7 +48,7 @@
                 <td>5h</td>
               </tr>
 
-              <tr>
+              <tr onclick="openDetail(this, 'task')">
                 <td>#102</td>
                 <td>UI Fixes</td>
 
@@ -59,7 +59,7 @@
                 <td>3h</td>
               </tr>
 
-              <tr>
+              <tr onclick="openDetail(this, 'task')">
                 <td>#103</td>
                 <td>Bug Testing</td>
 
@@ -87,7 +87,7 @@
             </thead>
 
             <tbody>
-              <tr>
+              <tr onclick="openDetail(this, 'bug')">
                 <td>#201</td>
                 <td>Login Crash</td>
 
@@ -100,7 +100,7 @@
                 </td>
               </tr>
 
-              <tr>
+              <tr onclick="openDetail(this, 'bug')">
                 <td>#202</td>
                 <td>UI Overflow</td>
 
@@ -113,7 +113,7 @@
                 </td>
               </tr>
 
-              <tr>
+              <tr onclick="openDetail(this, 'bug')">
                 <td>#203</td>
                 <td>API Timeout</td>
 
@@ -222,6 +222,42 @@
         </form>
       </div>
     </div>
+    <div class="modal-overlay" id="detailModal">
+      <div class="modal detail-modal">
+        <div class="modal-header">
+          <h3 id="detailTitle">Details</h3>
+          <button class="modal-close" onclick="closeDetail()">×</button>
+        </div>
+
+        <div class="detail-content">
+          <div class="detail-row">
+            <span>ID:</span>
+            <strong id="dId"></strong>
+          </div>
+
+          <div class="detail-row">
+            <span>Status:</span>
+            <span id="dStatus" class="status"></span>
+          </div>
+
+          <div class="detail-block">
+            <h4>Title</h4>
+            <p id="dTitle"></p>
+          </div>
+
+          <div class="detail-block">
+            <h4>Description</h4>
+            <p id="dDesc"></p>
+          </div>
+
+          <div class="detail-actions">
+            <button class="edit-btn">Edit</button>
+            <button class="delete-btn">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="jss/main.js"></script>
   </body>
 </html>

@@ -217,3 +217,44 @@ function addBug(title) {
     table.prepend(row);
 }
 
+function openDetail(row, type) {
+
+  const cells = row.children;
+
+  document.getElementById("dId").textContent = cells[0].innerText;
+  document.getElementById("dTitle").textContent = cells[1].innerText;
+
+  const status = cells[2].innerText.trim();
+
+  document.getElementById("dStatus").textContent = status;
+  document.getElementById("dStatus").className = "status " + statusClass(status);
+
+  if (type === "task") {
+    document.getElementById("detailTitle").textContent = "Task Details";
+    document.getElementById("dDesc").textContent = "Task description here...";
+  }
+
+  if (type === "bug") {
+    document.getElementById("detailTitle").textContent = "Bug Details";
+    document.getElementById("dDesc").textContent = "Bug description here...";
+  }
+
+  document.getElementById("detailModal").classList.add("show");
+}
+
+function closeDetail() {
+  document.getElementById("detailModal").classList.remove("show");
+}
+
+function statusClass(status) {
+
+  status = status.toLowerCase();
+
+  if (status.includes("progress")) return "in-progress";
+  if (status.includes("complete")) return "completed";
+  if (status.includes("pending")) return "pending";
+  if (status.includes("open")) return "open";
+  if (status.includes("resolved")) return "resolved";
+
+  return "";
+}

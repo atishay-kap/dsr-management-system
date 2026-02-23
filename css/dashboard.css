@@ -792,3 +792,87 @@ tbody tr td:last-child {
     opacity: 1;
     transform: translateY(0) scale(1);
 }
+
+.detail-modal {
+    max-width: 500px;
+}
+
+.detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+
+    font-size: 14px;
+}
+
+.detail-row span {
+    color: var(--text-secondary);
+}
+
+.detail-block h4 {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.detail-block p {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.detail-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.edit-btn,
+.delete-btn {
+    flex: 1;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    border: none;
+
+    transition: 0.2s;
+}
+
+.edit-btn {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.edit-btn:hover {
+    background: #bfdbfe;
+}
+
+.delete-btn {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.delete-btn:hover {
+    background: #fecaca;
+}
+
+#detailModal {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#detailModal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
