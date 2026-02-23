@@ -258,3 +258,21 @@ function statusClass(status) {
 
   return "";
 }
+
+function openCompleted(item) {
+
+  const title = item.querySelector("span").innerText;
+  const hours = item.querySelector("small").innerText;
+
+  document.getElementById("cId").textContent = "#C" + Math.floor(Math.random()*1000);
+  document.getElementById("cTitle").textContent = title;
+  document.getElementById("cDesc").textContent = "Task successfully completed.";
+  document.getElementById("cPlan").textContent = hours;
+  document.getElementById("cActual").textContent = hours;
+
+  document.getElementById("completedModal").classList.add("show");
+}
+
+function closeCompleted() {
+  document.getElementById("completedModal").classList.remove("show");
+}

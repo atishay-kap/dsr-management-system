@@ -876,3 +876,14 @@ tbody tr td:last-child {
     opacity: 1;
     pointer-events: auto;
 }
+
+#completedModal {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+#completedModal.show {
+    opacity: 1;
+    pointer-events: auto;
+}

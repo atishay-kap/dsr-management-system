@@ -155,15 +155,15 @@
           <h3>Completed Tasks</h3>
 
           <ul class="completed-list">
-            <li>
+            <li onclick="openCompleted(this)">
               <span>API Integration</span>
               <small>5h</small>
             </li>
-            <li>
+            <li onclick="openCompleted(this)">
               <span>Fixes</span>
               <small>3h</small>
             </li>
-            <li>
+            <li onclick="openCompleted(this)">
               <span>Deployment Setup</span>
               <small>2h</small>
             </li>
@@ -253,6 +253,46 @@
           <div class="detail-actions">
             <button class="edit-btn">Edit</button>
             <button class="delete-btn">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="completedModal">
+      <div class="modal detail-modal">
+        <div class="modal-header">
+          <h3>Completed Task</h3>
+          <button class="modal-close" onclick="closeCompleted()">×</button>
+        </div>
+
+        <div class="detail-content">
+          <div class="detail-row">
+            <span>ID:</span>
+            <strong id="cId"></strong>
+          </div>
+
+          <div class="detail-row">
+            <span>Status:</span>
+            <span class="status completed">Completed</span>
+          </div>
+
+          <div class="detail-block">
+            <h4>Title</h4>
+            <p id="cTitle"></p>
+          </div>
+
+          <div class="detail-block">
+            <h4>Description</h4>
+            <p id="cDesc"></p>
+          </div>
+
+          <div class="detail-row">
+            <span>Planned Hours:</span>
+            <strong id="cPlan"></strong>
+          </div>
+
+          <div class="detail-row">
+            <span>Actual Hours:</span>
+            <strong id="cActual"></strong>
           </div>
         </div>
       </div>
