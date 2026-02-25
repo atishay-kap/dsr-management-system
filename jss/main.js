@@ -114,26 +114,24 @@ function addToTable(title, desc, hours) {
         addTask(title, hours);
     }
 
-    showToast("Created successfully ✅");
+    showToast("Task Created Successfully 🎉", "success");
 }
 
 let toastTimeout;
 
-function showToast(msg, type = "success") {
+function showToast(message, type = "success") {
 
     const toast = document.getElementById("toast");
-    const text = document.getElementById("toastText");
     const icon = document.getElementById("toastIcon");
+    const text = document.getElementById("toastText");
 
-    text.textContent = msg;
+    toast.className = "toast";
 
-    if (type === "success") {
-        icon.textContent = "✅";
-    }
+    if (type === "success") icon.textContent = "✔️";
+    if (type === "bug") icon.textContent = "🐞";
+    if (type === "error") icon.textContent = "⚠️";
 
-    if (type === "error") {
-        icon.textContent = "❌";
-    }
+    text.textContent = message;
 
     toast.classList.add("show");
 
@@ -141,6 +139,8 @@ function showToast(msg, type = "success") {
         toast.classList.remove("show");
     }, 2200);
 }
+
+
 
 function addTask(title, hours) {
 
@@ -325,7 +325,8 @@ function markComplete() {
     closeDetail();
     selectedTaskRow = null;
 
-    showToast("Task marked as completed ✅");
+    showToast("Task marked as complete", "success");
+
 }
 
 function markResolved() {
@@ -341,5 +342,6 @@ function markResolved() {
     closeDetail();
     selectedTaskRow = null;
 
-    showToast("Bug marked as resolved ✅");
+    showToast("Bug resolved", "bug");
+
 }
