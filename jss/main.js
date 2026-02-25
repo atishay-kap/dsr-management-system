@@ -78,12 +78,6 @@ function closeModal() {
 }
 
 
-modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-        closeModal();
-    }
-});
-
 document.getElementById("modalForm").addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -281,13 +275,19 @@ document.addEventListener("keydown", function (e) {
 
     if (e.key === "Escape") {
 
-        // Create modal
         document.getElementById("taskModal")?.classList.remove("active");
 
-        // Detail modal
         document.getElementById("detailModal")?.classList.remove("show");
 
-        // Completed modal
         document.getElementById("completedModal")?.classList.remove("show");
     }
+});
+
+document.querySelectorAll(".modal-overlay").forEach(overlay => {
+    overlay.addEventListener("click", function (e) {
+        if (e.target === overlay) {
+            overlay.classList.remove("active");
+            overlay.classList.remove("show");
+        }
+    });
 });
