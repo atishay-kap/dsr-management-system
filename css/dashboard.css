@@ -887,3 +887,39 @@ tbody tr td:last-child {
     opacity: 1;
     pointer-events: auto;
 }
+
+.complete-btn{
+    flex: 1;
+
+    background: #dcfce7;
+    color: #166534;
+
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.complete-btn:hover {
+    background: #bbf7d0;
+}
+
+.resolve-btn{
+    flex: 1;
+
+    background: #dcfce7;
+    color: #166534;
+
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.resolve-btn:hover {
+    background: #bbf7d0;
+}

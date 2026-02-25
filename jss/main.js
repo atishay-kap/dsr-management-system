@@ -18,6 +18,7 @@ const priorityGroup = document.getElementById("priorityGroup");
 const inputPriority = document.getElementById("inputPriority");
 
 let currentType = "task";
+let selectedTaskRow = null;
 
 
 function openModal(type) {
@@ -212,13 +213,18 @@ function addBug(title) {
 }
 
 function openDetail(row, type) {
-
+  selectedTaskRow = row;
   const cells = row.children;
 
   document.getElementById("dId").textContent = cells[0].innerText;
   document.getElementById("dTitle").textContent = cells[1].innerText;
 
   const status = cells[2].innerText.trim();
+  const completeBtn = document.querySelector(".complete-btn");
+  const resolveBtn = document.querySelector(".resolve-btn");
+
+  completeBtn.style.display = "none";
+  resolveBtn.style.display = "none";
 
   document.getElementById("dStatus").textContent = status;
   document.getElementById("dStatus").className = "status " + statusClass(status);
@@ -226,11 +232,13 @@ function openDetail(row, type) {
   if (type === "task") {
     document.getElementById("detailTitle").textContent = "Task Details";
     document.getElementById("dDesc").textContent = "Task description here...";
+    completeBtn.style.display = "block";
   }
 
   if (type === "bug") {
     document.getElementById("detailTitle").textContent = "Bug Details";
     document.getElementById("dDesc").textContent = "Bug description here...";
+    resolveBtn.style.display = "block";
   }
 
   document.getElementById("detailModal").classList.add("show");
@@ -291,3 +299,47 @@ document.querySelectorAll(".modal-overlay").forEach(overlay => {
         }
     });
 });
+
+function markComplete() {
+
+    if (!selectedTaskRow) return;
+
+    const title = selectedTaskRow.children[1].innerText;
+    const hours = selectedTaskRow.children[3].innerText;
+
+    selectedTaskRow.remove();
+
+    const completedList = document.querySelector(".completed-list");
+
+    const li = document.createElement("li");
+
+    li.setAttribute("onclick", "openCompleted(this)");
+
+    li.innerHTML = `
+        <span>${title}</span>
+        <small>${hours}</small>
+    `;
+
+    completedList.prepend(li);
+
+    closeDetail();
+    selectedTaskRow = null;
+
+    showToast("Task marked as completed ✅");
+}
+
+function markResolved() {
+    if (!selectedTaskRow) return;
+
+    const statusCell = selectedTaskRow.children[2];
+
+    statusCell.innerHTML = `
+        <span class="status resolved">
+            Resolved
+        </span>
+    `;
+    closeDetail();
+    selectedTaskRow = null;
+
+    showToast("Bug marked as resolved ✅");
+}
