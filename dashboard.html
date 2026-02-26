@@ -25,108 +25,110 @@
       <div class="left-panel">
         <div class="card">
           <h3>My Tasks</h3>
+          <div class="table-wrapper">
+            <table id="taskTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Status</th>
+                  <th>Hours</th>
+                </tr>
+              </thead>
 
-          <table id="taskTable">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Status</th>
-                <th>Hours</th>
-              </tr>
-            </thead>
+              <tbody>
+                <tr onclick="openDetail(this, 'task')">
+                  <td>#101</td>
+                  <td>API Integration</td>
 
-            <tbody>
-              <tr onclick="openDetail(this, 'task')">
-                <td>#101</td>
-                <td>API Integration</td>
+                  <td>
+                    <span class="status in-progress"> In Progress </span>
+                  </td>
 
-                <td>
-                  <span class="status in-progress"> In Progress </span>
-                </td>
+                  <td>5h</td>
+                </tr>
 
-                <td>5h</td>
-              </tr>
+                <tr onclick="openDetail(this, 'task')">
+                  <td>#102</td>
+                  <td>UI Fixes</td>
 
-              <tr onclick="openDetail(this, 'task')">
-                <td>#102</td>
-                <td>UI Fixes</td>
+                  <td>
+                    <span class="status completed"> Completed </span>
+                  </td>
 
-                <td>
-                  <span class="status completed"> Completed </span>
-                </td>
+                  <td>3h</td>
+                </tr>
 
-                <td>3h</td>
-              </tr>
+                <tr onclick="openDetail(this, 'task')">
+                  <td>#103</td>
+                  <td>Bug Testing</td>
 
-              <tr onclick="openDetail(this, 'task')">
-                <td>#103</td>
-                <td>Bug Testing</td>
+                  <td>
+                    <span class="status pending"> Pending </span>
+                  </td>
 
-                <td>
-                  <span class="status pending"> Pending </span>
-                </td>
-
-                <td>2h</td>
-              </tr>
-            </tbody>
-          </table>
+                  <td>2h</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div class="card">
           <h3>My Bugs</h3>
+          <div class="table-wrapper">
+            <table id="bugTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Bug</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                </tr>
+              </thead>
 
-          <table id="bugTable">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Bug</th>
-                <th>Status</th>
-                <th>Priority</th>
-              </tr>
-            </thead>
+              <tbody>
+                <tr onclick="openDetail(this, 'bug')">
+                  <td>#201</td>
+                  <td>Login Crash</td>
 
-            <tbody>
-              <tr onclick="openDetail(this, 'bug')">
-                <td>#201</td>
-                <td>Login Crash</td>
+                  <td>
+                    <span class="status open"> Open </span>
+                  </td>
 
-                <td>
-                  <span class="status open"> Open </span>
-                </td>
+                  <td>
+                    <span class="priority high"> High </span>
+                  </td>
+                </tr>
 
-                <td>
-                  <span class="priority high"> High </span>
-                </td>
-              </tr>
+                <tr onclick="openDetail(this, 'bug')">
+                  <td>#202</td>
+                  <td>UI Overflow</td>
 
-              <tr onclick="openDetail(this, 'bug')">
-                <td>#202</td>
-                <td>UI Overflow</td>
+                  <td>
+                    <span class="status in-progress"> In Progress </span>
+                  </td>
 
-                <td>
-                  <span class="status in-progress"> In Progress </span>
-                </td>
+                  <td>
+                    <span class="priority medium"> Medium </span>
+                  </td>
+                </tr>
 
-                <td>
-                  <span class="priority medium"> Medium </span>
-                </td>
-              </tr>
+                <tr onclick="openDetail(this, 'bug')">
+                  <td>#203</td>
+                  <td>API Timeout</td>
 
-              <tr onclick="openDetail(this, 'bug')">
-                <td>#203</td>
-                <td>API Timeout</td>
+                  <td>
+                    <span class="status resolved"> Resolved </span>
+                  </td>
 
-                <td>
-                  <span class="status resolved"> Resolved </span>
-                </td>
-
-                <td>
-                  <span class="priority low"> Low </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  <td>
+                    <span class="priority low"> Low </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

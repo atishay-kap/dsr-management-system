@@ -876,3 +876,67 @@ tbody tr td:last-child {
 .resolve-btn:hover {
     background: #bbf7d0;
 }
+
+@media (max-width: 1100px) {
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .left-panel,
+    .right-panel {
+        width: 100%;
+    }
+    .action-card {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .send-btn {
+        grid-column: span 2;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+    .table-wrapper::-webkit-scrollbar {
+        height: 6px;
+    }
+    .table-wrapper::-webkit-scrollbar-thumb {
+        background: #d6cdc3;
+        border-radius: 6px;
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .action-card {
+        grid-template-columns: 1fr;
+    }
+
+    .send-btn {
+        grid-column: auto;
+    }
+
+    .container {
+        padding: 14px;
+    }
+
+    .navbar {
+        padding: 0 14px;
+    }
+
+    .user-nav span {
+        display: none;
+    }
+
+    .toast {
+        right: 12px;
+        bottom: 12px;
+        max-width: 92%;
+    }
+}
