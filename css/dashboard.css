@@ -890,8 +890,10 @@ tbody tr td:last-child {
     .right-panel {
         width: 100%;
     }
+
     .action-card {
         grid-template-columns: 1fr 1fr;
+        gap: 14px;
     }
 
     .send-btn {
@@ -902,17 +904,14 @@ tbody tr td:last-child {
         width: 100%;
         overflow-x: auto;
     }
-    .table-wrapper::-webkit-scrollbar {
-        height: 6px;
-    }
-    .table-wrapper::-webkit-scrollbar-thumb {
-        background: #d6cdc3;
-        border-radius: 6px;
-    }
-
 }
 
 @media (max-width: 700px) {
+
+    .container {
+        padding: 14px;
+        gap: 16px;
+    }
 
     .action-card {
         grid-template-columns: 1fr;
@@ -922,17 +921,13 @@ tbody tr td:last-child {
         grid-column: auto;
     }
 
-    .container {
-        padding: 14px;
-    }
-
     .navbar {
         padding: 0 14px;
     }
 
-    .user-nav span {
+    /* .user-nav span {
         display: none;
-    }
+    } */
 
     .toast {
         right: 12px;
