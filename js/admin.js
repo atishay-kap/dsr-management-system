@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "Business Analyst"
   ];
 
-  for (let i = 1; i <= 30; i++) {
+  for (let i = 1; i <= 50; i++) {
     users.push({
       id: i,
       name: "User " + i,
@@ -194,5 +194,17 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   loadUsers(1);
+
+});
+
+document.addEventListener("keydown", function (e) {
+
+  if (e.key === "Escape") {
+    const adminDialog = document.getElementById("adminDialog");
+
+    if (adminDialog?.classList.contains("active")) {
+      adminDialog.classList.remove("active");
+    }
+  }
 
 });
