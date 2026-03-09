@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+
   const users = [];
 
   const roles = [
@@ -25,12 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
           title: "Task " + i,
           status: ["In Progress", "Completed", "Pending"][i % 3],
           hours: (2 + (i % 6)) + "h"
-        },
-        {
-          id: 200 + i,
-          title: "Feature " + i,
-          status: ["Pending", "In Progress", "Completed"][i % 3],
-          hours: (1 + (i % 5)) + "h"
         }
       ],
       bugs: [
@@ -51,6 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const paginationContainer = document.getElementById("pagination");
 
   function loadUsers(page = 1) {
+
     currentPage = page;
 
     const start = (page - 1) * USERS_PER_PAGE;
@@ -71,29 +67,34 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function attachCardListeners() {
-    const cards = document.querySelectorAll(".user-card-rect");
 
-    cards.forEach(card => {
-      card.addEventListener("click", function () {
-        const userId = parseInt(this.getAttribute("data-id"));
-        selectUser(userId);
+    document.querySelectorAll(".user-card-rect")
+      .forEach(card => {
+
+        card.addEventListener("click", function () {
+
+          const userId = parseInt(this.getAttribute("data-id"));
+          selectUser(userId);
+
+        });
+
       });
-    });
   }
 
   function renderPagination() {
+
     const totalPages = Math.ceil(users.length / USERS_PER_PAGE);
 
     paginationContainer.innerHTML = "";
 
     for (let i = 1; i <= totalPages; i++) {
+
       const btn = document.createElement("button");
+
       btn.className = "page-btn";
       btn.textContent = i;
 
-      if (i === currentPage) {
-        btn.classList.add("active");
-      }
+      if (i === currentPage) btn.classList.add("active");
 
       btn.addEventListener("click", () => loadUsers(i));
 
@@ -102,6 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function selectUser(userId) {
+
     const user = users.find(u => u.id === userId);
     if (!user) return;
 
@@ -118,6 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function renderTaskTable(tasks) {
+
     return `
       <div class="card">
         <h3>Tasks</h3>
@@ -135,11 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
               <tr>
                 <td>#${task.id}</td>
                 <td>${task.title}</td>
-                <td>
-                  <span class="status ${formatClass(task.status)}">
-                    ${task.status}
-                  </span>
-                </td>
+                <td><span class="status ${formatClass(task.status)}">${task.status}</span></td>
                 <td>${task.hours}</td>
               </tr>
             `).join("")}
@@ -150,6 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function renderBugTable(bugs) {
+
     return `
       <div class="card" style="margin-top:20px;">
         <h3>Bugs</h3>
@@ -167,16 +167,8 @@ document.addEventListener("DOMContentLoaded", function () {
               <tr>
                 <td>#${bug.id}</td>
                 <td>${bug.title}</td>
-                <td>
-                  <span class="status ${formatClass(bug.status)}">
-                    ${bug.status}
-                  </span>
-                </td>
-                <td>
-                  <span class="priority ${bug.priority.toLowerCase()}">
-                    ${bug.priority}
-                  </span>
-                </td>
+                <td><span class="status ${formatClass(bug.status)}">${bug.status}</span></td>
+                <td><span class="priority ${bug.priority.toLowerCase()}">${bug.priority}</span></td>
               </tr>
             `).join("")}
           </tbody>
@@ -193,6 +185,39 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("adminDialog").classList.remove("active");
   };
 
+  const createUserForm = document.getElementById("createUserForm");
+
+  document.getElementById("createUserBtn").addEventListener("click", function () {
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const name = document.getElementById("newUserName").value.trim();
+    const designation = document.getElementById("newUserDesignation").value.trim();
+    const email = document.getElementById("newUserEmail").value.trim();
+    const password = document.getElementById("newUserPassword").value;
+    const confirmPassword = document.getElementById("confirmUserPassword").value;
+
+    if (password !== confirmPassword) {
+      return;
+    }
+
+    const newUser = {
+      id: users.length + 1,
+      name,
+      designation,
+      email,
+      password,
+      tasks: [],
+      bugs: []
+    };
+
+    users.push(newUser);
+    closeCreateUserDrawer();
+    loadUsers(currentPage);
+    createUserForm.reset();
+  });
+
   loadUsers(1);
 
 });
@@ -200,11 +225,39 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("keydown", function (e) {
 
   if (e.key === "Escape") {
+
     const adminDialog = document.getElementById("adminDialog");
 
     if (adminDialog?.classList.contains("active")) {
       adminDialog.classList.remove("active");
     }
+
+    const drawer = document.getElementById("createUserDrawer");
+
+    if (drawer?.classList.contains("active")) {
+      drawer.classList.remove("active");
+    }
+
   }
 
 });
+
+window.openCreateUserDrawer = function () {
+  document.getElementById("createUserDrawer").classList.add("active");
+};
+
+window.closeCreateUserDrawer = function () {
+  document.getElementById("createUserDrawer").classList.remove("active");
+};
+
+window.togglePassword = function(id) {
+
+  const input = document.getElementById(id);
+
+  if (input.type === "password") {
+    input.type = "text";
+  } else {
+    input.type = "password";
+  }
+
+};

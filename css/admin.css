@@ -174,3 +174,187 @@
     color: white;
     border-color: var(--accent-purple);
 }
+
+.drawer {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+.drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.drawer-panel {
+  width: 360px;
+  height: auto;
+
+  max-height: calc(100vh - 120px);
+
+  margin: 40px 30px;
+
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+
+  border-radius: 16px;
+
+  box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+
+  transform: translateX(110%);
+  transition: transform 0.35s cubic-bezier(.22,.61,.36,1);
+
+  padding: 26px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer.active {
+  pointer-events: auto;
+}
+
+.drawer.active .drawer-backdrop {
+  opacity: 1;
+}
+
+.drawer.active .drawer-panel {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+.drawer-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.drawer-close {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.drawer-close:hover {
+  opacity: 1;
+}
+
+.drawer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.form-group input {
+  padding: 10px 12px;
+
+  border-radius: 8px;
+
+  border: 1px solid #ddd;
+
+  font-size: 14px;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #6c63ff;
+}
+
+.drawer-actions {
+  margin-top: auto;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancel {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+}
+
+.btn-submit {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #6c63ff;
+  color: white;
+  cursor: pointer;
+}
+
+.form-group input {
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  border: 1px solid var(--border-color);
+
+  background: var(--bg-card);
+
+  font-size: 14px;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 2px rgba(108,99,255,0.1);
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.password-toggle {
+  position: absolute;
+
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+
+  cursor: pointer;
+
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.password-toggle:hover {
+  opacity: 1;
+}
