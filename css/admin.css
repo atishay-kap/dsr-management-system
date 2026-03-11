@@ -358,3 +358,89 @@
 .password-toggle:hover {
   opacity: 1;
 }
+
+/* ======================
+   TOASTER SYSTEM
+====================== */
+
+#toastContainer {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  z-index: 999999;
+}
+
+/* toast card */
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  min-width: 280px;
+
+  padding: 14px 18px;
+
+  border-radius: 14px;
+
+  background: var(--bg-card);
+
+  border: 1px solid var(--border-color);
+
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+
+  font-size: 14px;
+  font-weight: 500;
+
+  color: var(--text-primary);
+
+  animation: toastSlideUp 0.35s ease forwards;
+}
+
+/* icon */
+
+.toast-icon {
+  width: 22px;
+  height: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #6c63ff;
+}
+
+/* slide in */
+
+@keyframes toastSlideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* slide out */
+
+.toast.hide {
+  animation: toastSlideDown 0.35s ease forwards;
+}
+
+@keyframes toastSlideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}

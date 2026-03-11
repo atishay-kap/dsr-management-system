@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
               <th>ID</th>
               <th>Title</th>
               <th>Status</th>
-              <th>Hours</th>
+              <th>Total Hours</th>
             </tr>
           </thead>
           <tbody>
@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const createUserForm = document.getElementById("createUserForm");
 
-  document.getElementById("createUserBtn").addEventListener("click", function () {
+  document.getElementById("createUserBtn").addEventListener("click", function (e) {
 
     e.preventDefault();
     e.stopPropagation();
@@ -198,7 +198,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const password = document.getElementById("newUserPassword").value;
     const confirmPassword = document.getElementById("confirmUserPassword").value;
 
+    if (!name || !designation || !email || !password) {
+        showToast("Please fill all fields", "warning");
+        return;
+    }
+
     if (password !== confirmPassword) {
+      showToast("Passwords do not match!", "error");
       return;
     }
 
@@ -216,7 +222,10 @@ document.addEventListener("DOMContentLoaded", function () {
     closeCreateUserDrawer();
     loadUsers(currentPage);
     createUserForm.reset();
+    
+    showToast("User created successfully!","success");
   });
+
 
   loadUsers(1);
 
@@ -261,3 +270,41 @@ window.togglePassword = function(id) {
   }
 
 };
+
+function showToast(message, type = "success") {
+
+  let container = document.getElementById("toastContainer");
+
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toastContainer";
+    document.body.appendChild(container);
+  }
+
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+
+    let icon = "✔";
+
+    if (type === "error") icon = "✖";
+    if (type === "warning") icon = "⚠";
+
+    toast.innerHTML = `
+    <span class="toast-icon">${icon}</span>
+    <span>${message}</span>
+    `;
+
+  container.prepend(toast);
+
+  const timer = setTimeout(() => {
+
+    toast.classList.add("hide");
+
+    setTimeout(() => {
+      toast.remove();
+    }, 350);
+
+  }, 4000);
+
+  toast.addEventListener("mouseenter", () => clearTimeout(timer));
+}
