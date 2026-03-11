@@ -41,6 +41,44 @@
         </div>
       </div>
 
+      <div class="admin-detail-modal" id="adminDetailModal">
+        <div class="admin-detail-backdrop" onclick="closeAdminDetail()"></div>
+
+        <div class="admin-detail-card">
+          <div class="detail-header">
+            <h3 id="adminDetailTitle">Details</h3>
+            <button onclick="closeAdminDetail()">×</button>
+          </div>
+
+          <div class="detail-content">
+            <div class="detail-row">
+              <span>ID</span>
+              <strong id="adminDId"></strong>
+            </div>
+
+            <div class="detail-row">
+              <span>Status</span>
+              <span id="adminDStatus" class="status"></span>
+            </div>
+
+            <div class="detail-row">
+              <span>Title</span>
+              <strong id="adminDTitle"></strong>
+            </div>
+
+            <div class="detail-row" id="adminHoursRow">
+              <span>Hours</span>
+              <strong id="adminDHours"></strong>
+            </div>
+
+            <div class="detail-row" id="adminPriorityRow">
+              <span>Priority</span>
+              <span id="adminDPriority" class="priority"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div id="createUserDrawer" class="drawer">
         <div class="drawer-backdrop" onclick="closeCreateUserDrawer()"></div>
 

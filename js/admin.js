@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
           </thead>
           <tbody>
             ${tasks.map(task => `
-              <tr>
+              <tr onclick="openAdminDetail(this,'task')">
                 <td>#${task.id}</td>
                 <td>${task.title}</td>
                 <td><span class="status ${formatClass(task.status)}">${task.status}</span></td>
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
           </thead>
           <tbody>
             ${bugs.map(bug => `
-              <tr>
+              <tr onclick="openAdminDetail(this,'bug')">
                 <td>#${bug.id}</td>
                 <td>${bug.title}</td>
                 <td><span class="status ${formatClass(bug.status)}">${bug.status}</span></td>
@@ -247,6 +247,12 @@ document.addEventListener("keydown", function (e) {
       drawer.classList.remove("active");
     }
 
+    const detailModal = document.getElementById("adminDetailModal");
+
+    if (detailModal?.classList.contains("active")) {
+      detailModal.classList.remove("active");
+    }
+
   }
 
 });
@@ -307,4 +313,54 @@ function showToast(message, type = "success") {
   }, 4000);
 
   toast.addEventListener("mouseenter", () => clearTimeout(timer));
+}
+
+window.openAdminDetail = function(row,type){
+
+  const cells = row.children;
+
+  document.getElementById("adminDId").textContent = cells[0].innerText;
+  document.getElementById("adminDTitle").textContent = cells[1].innerText;
+
+  const status = cells[2].innerText.trim();
+  const statusEl = document.getElementById("adminDStatus");
+
+  statusEl.textContent = status;
+  statusEl.className = "status " + status.toLowerCase().replace(/\s+/g,"-");
+
+  const hoursRow = document.getElementById("adminHoursRow");
+  const priorityRow = document.getElementById("adminPriorityRow");
+
+  if(type === "task"){
+
+    hoursRow.style.display="flex";
+    priorityRow.style.display="none";
+
+    document.getElementById("adminDHours").textContent = cells[3].innerText;
+
+    document.getElementById("adminDetailTitle").innerText="Task Details";
+  }
+
+  if(type === "bug"){
+
+    hoursRow.style.display="none";
+    priorityRow.style.display="flex";
+
+    const priority = cells[3].innerText.trim();
+
+    const p = document.getElementById("adminDPriority");
+    p.textContent = priority;
+    p.className="priority "+priority.toLowerCase();
+
+    document.getElementById("adminDetailTitle").innerText="Bug Details";
+  }
+
+  document.getElementById("adminDetailModal").classList.add("active");
+
+}
+
+window.closeAdminDetail = function(){
+
+  document.getElementById("adminDetailModal").classList.remove("active");
+
 }
