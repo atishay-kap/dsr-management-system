@@ -195,6 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const name = document.getElementById("newUserName").value.trim();
     const designation = document.getElementById("newUserDesignation").value.trim();
     const email = document.getElementById("newUserEmail").value.trim();
+    const userType = document.getElementById("newUserType").value;
     const password = document.getElementById("newUserPassword").value;
     const confirmPassword = document.getElementById("confirmUserPassword").value;
 

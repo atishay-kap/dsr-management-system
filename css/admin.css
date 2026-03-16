@@ -272,12 +272,15 @@
   opacity: 0.7;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   padding: 10px 12px;
 
-  border-radius: 8px;
+  border-radius: 10px;
 
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
+
+  background: var(--bg-card);
 
   font-size: 14px;
 }
