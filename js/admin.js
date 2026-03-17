@@ -1,53 +1,36 @@
-document.addEventListener("DOMContentLoaded", function () {
+const user = JSON.parse(localStorage.getItem("user"));
 
-  const users = [];
+if (!user || user.role !== "ADMIN") {
+  window.location.href = "index.html";
+}
 
-  const roles = [
-    "Backend Developer",
-    "Frontend Developer",
-    "QA Engineer",
-    "UI/UX Designer",
-    "DevOps Engineer",
-    "Product Manager",
-    "Mobile Developer",
-    "Data Analyst",
-    "Security Engineer",
-    "Business Analyst"
-  ];
+function logout(){
+  localStorage.removeItem("user");
+  window.location.href = "index.html";
+}
 
-  for (let i = 1; i <= 50; i++) {
-    users.push({
-      id: i,
-      name: "User " + i,
-      designation: roles[i % roles.length],
-      tasks: [
-        {
-          id: 100 + i,
-          title: "Task " + i,
-          status: ["In Progress", "Completed", "Pending"][i % 3],
-          hours: (2 + (i % 6)) + "h"
-        }
-      ],
-      bugs: [
-        {
-          id: 300 + i,
-          title: "Bug " + i,
-          status: ["Open", "Resolved", "In Progress"][i % 3],
-          priority: ["Low", "Medium", "High"][i % 3]
-        }
-      ]
-    });
-  }
+document.addEventListener("DOMContentLoaded", function () {  
 
+  let users = [];
   const USERS_PER_PAGE = 10;
   let currentPage = 1;
 
   const userGrid = document.getElementById("userGrid");
   const paginationContainer = document.getElementById("pagination");
-
-  function loadUsers(page = 1) {
+  async function loadUsers(page = 1) {
+    console.log("Users:", users);
+    console.log("userGrid:", userGrid);
 
     currentPage = page;
+
+    try{
+      const res = await fetch("http://localhost:8080/users");
+      users = await res.json();
+    }catch(err){
+      showToast("Error loading users","error");
+      users=[];
+      return;
+    }
 
     const start = (page - 1) * USERS_PER_PAGE;
     const end = start + USERS_PER_PAGE;
@@ -56,15 +39,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     userGrid.innerHTML = paginatedUsers.map(user => `
       <div class="user-card-rect" data-id="${user.id}">
-        <div class="avatar">${user.name.charAt(0)}</div>
-        <h4>${user.name}</h4>
-        <p class="designation">${user.designation}</p>
+        <div class="avatar">${user.name ? user.name.charAt(0) : "U"}</div>
+        <h4>${user.name || "Unknown"}</h4>
+        <p class="designation">${user.designation || ""}</p>
       </div>
     `).join("");
 
     attachCardListeners();
     renderPagination();
   }
+  loadUsers(1);
 
   function attachCardListeners() {
 
@@ -112,8 +96,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const dialogContent = document.getElementById("dialogContent");
 
     dialogContent.innerHTML = `
-      ${renderTaskTable(user.tasks)}
-      ${renderBugTable(user.bugs)}
+      ${renderTaskTable(user.tasks || [])}
+      ${renderBugTable(user.bugs || [])}
     `;
 
     document.getElementById("adminDialog").classList.add("active");
@@ -187,48 +171,54 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const createUserForm = document.getElementById("createUserForm");
 
-  document.getElementById("createUserBtn").addEventListener("click", function (e) {
+ document.getElementById("createUserBtn").addEventListener("click", async function (e) {
 
-    e.preventDefault();
-    e.stopPropagation();
+  e.preventDefault();
+  e.stopPropagation();
 
-    const name = document.getElementById("newUserName").value.trim();
-    const designation = document.getElementById("newUserDesignation").value.trim();
-    const email = document.getElementById("newUserEmail").value.trim();
-    const userType = document.getElementById("newUserType").value;
-    const password = document.getElementById("newUserPassword").value;
-    const confirmPassword = document.getElementById("confirmUserPassword").value;
+  const name = document.getElementById("newUserName").value.trim();
+  const designation = document.getElementById("newUserDesignation").value.trim();
+  const email = document.getElementById("newUserEmail").value.trim();
+  const userType = document.getElementById("newUserType").value;
+  const password = document.getElementById("newUserPassword").value;
+  const confirmPassword = document.getElementById("confirmUserPassword").value;
 
-    if (!name || !designation || !email || !password) {
-        showToast("Please fill all fields", "warning");
-        return;
-    }
+  if (!name || !designation || !email || !password) {
+    showToast("Please fill all fields", "warning");
+    return;
+  }
 
-    if (password !== confirmPassword) {
-      showToast("Passwords do not match!", "error");
-      return;
-    }
+  if (password !== confirmPassword) {
+    showToast("Passwords do not match!", "error");
+    return;
+  }
 
-    const newUser = {
-      id: users.length + 1,
-      name,
-      designation,
-      email,
-      password,
-      tasks: [],
-      bugs: []
-    };
+  try {
 
-    users.push(newUser);
+    await fetch("http://localhost:8080/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name,
+        designation,
+        email,
+        password,
+        role: userType.toUpperCase()
+      })
+    });
+
     closeCreateUserDrawer();
-    loadUsers(currentPage);
     createUserForm.reset();
-    
+
+    loadUsers(currentPage);
+
     showToast("User created successfully!","success");
-  });
 
-
-  loadUsers(1);
+  } catch (err) {
+    showToast("Error creating user","error");
+  }
 
 });
 
@@ -365,3 +355,5 @@ window.closeAdminDetail = function(){
   document.getElementById("adminDetailModal").classList.remove("active");
 
 }
+
+});

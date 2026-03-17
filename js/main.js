@@ -16,6 +16,11 @@ const statusGroup = document.getElementById("statusGroup");
 const hoursGroup = document.getElementById("hoursGroup");
 const priorityGroup = document.getElementById("priorityGroup");
 const inputPriority = document.getElementById("inputPriority");
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user) {
+  window.location.href = "index.html";
+}
 
 let currentType = "task";
 let selectedTaskRow = null;
@@ -344,4 +349,9 @@ function markResolved() {
 
     showToast("Bug resolved", "bug");
 
+}
+
+function logout(){
+  localStorage.removeItem("user");
+  window.location.href = "index.html";
 }
