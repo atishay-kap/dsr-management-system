@@ -498,3 +498,26 @@
   margin-bottom:14px;
   font-size:14px;
 }
+
+.type-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.type-pill.main {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.type-pill.side {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.type-pill.client {
+  background: #e8f5e9;
+  color: #2e7d32;
+}

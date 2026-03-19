@@ -12,7 +12,7 @@
     <nav class="navbar">
       <div class="logo">DSR</div>
       <div class="user-nav">
-        <span>Admin - Atishay</span>
+        <span id="navUserName"></span>
         <button class="logout-btn" onclick="logout()">Logout</button>
       </div>
     </nav>
@@ -50,7 +50,7 @@
             <button onclick="closeAdminDetail()">×</button>
           </div>
 
-          <div class="detail-content">
+          <div class="detail-content" id="detailContent">
             <div class="detail-row">
               <span>ID</span>
               <strong id="adminDId"></strong>
@@ -69,11 +69,6 @@
             <div class="detail-row" id="adminHoursRow">
               <span>Hours</span>
               <strong id="adminDHours"></strong>
-            </div>
-
-            <div class="detail-row" id="adminPriorityRow">
-              <span>Priority</span>
-              <span id="adminDPriority" class="priority"></span>
             </div>
           </div>
         </div>

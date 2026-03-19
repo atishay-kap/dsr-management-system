@@ -16,7 +16,7 @@
       <div class="logo">DSR</div>
 
       <div class="user-nav">
-        <span>Atishay</span>
+        <span id="navUserName"></span>
         <button class="logout-btn" onclick="logout()">Logout</button>
       </div>
     </nav>
@@ -32,44 +32,11 @@
                   <th>ID</th>
                   <th>Title</th>
                   <th>Status</th>
+                  <th>Type</th>
                   <th>Hours</th>
                 </tr>
               </thead>
-
-              <tbody>
-                <tr onclick="openDetail(this, 'task')">
-                  <td>#101</td>
-                  <td>API Integration</td>
-
-                  <td>
-                    <span class="status in-progress"> In Progress </span>
-                  </td>
-
-                  <td>5h</td>
-                </tr>
-
-                <tr onclick="openDetail(this, 'task')">
-                  <td>#102</td>
-                  <td>UI Fixes</td>
-
-                  <td>
-                    <span class="status completed"> Completed </span>
-                  </td>
-
-                  <td>3h</td>
-                </tr>
-
-                <tr onclick="openDetail(this, 'task')">
-                  <td>#103</td>
-                  <td>Bug Testing</td>
-
-                  <td>
-                    <span class="status pending"> Pending </span>
-                  </td>
-
-                  <td>2h</td>
-                </tr>
-              </tbody>
+              <tbody id="taskTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -156,20 +123,7 @@
         <div class="card completed-card">
           <h3>Completed Tasks</h3>
 
-          <ul class="completed-list">
-            <li onclick="openCompleted(this)">
-              <span>API Integration</span>
-              <small>5h</small>
-            </li>
-            <li onclick="openCompleted(this)">
-              <span>Fixes</span>
-              <small>3h</small>
-            </li>
-            <li onclick="openCompleted(this)">
-              <span>Deployment Setup</span>
-              <small>2h</small>
-            </li>
-          </ul>
+          <ul class="completed-list" id="completedTasksContainer"></ul>
         </div>
       </div>
     </div>
@@ -181,6 +135,8 @@
         </div>
 
         <form class="modal-form" id="modalForm">
+          <input type="hidden" id="inputTaskType" value="MAIN" />
+
           <div class="form-group">
             <label id="labelTitle">Title</label>
             <input type="text" id="inputTitle" placeholder="" />
@@ -242,6 +198,13 @@
             <span id="dStatus" class="status"></span>
           </div>
 
+          <div class="detail-row" id="typeRow">
+            <span>Type</span>
+            <strong>
+              <span id="dType" class="type-pill"></span>
+            </strong>
+          </div>
+
           <div class="detail-block">
             <h4>Title</h4>
             <p id="dTitle"></p>
@@ -254,6 +217,7 @@
 
           <div class="detail-actions">
             <button class="edit-btn">Edit</button>
+            <button class="start-btn" onclick="startTask()">Start Task</button>
             <button class="complete-btn" onclick="markComplete()">
               Mark as Completed
             </button>
@@ -281,6 +245,13 @@
           <div class="detail-row">
             <span>Status:</span>
             <span class="status completed">Completed</span>
+          </div>
+
+          <div class="detail-row">
+            <span>Type:</span>
+            <strong>
+              <span id="cType" class="type-pill"></span>
+            </strong>
           </div>
 
           <div class="detail-block">

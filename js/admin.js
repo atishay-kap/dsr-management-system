@@ -1,4 +1,5 @@
 const user = JSON.parse(localStorage.getItem("user"));
+let currentTasks = [];
 
 if (!user || user.role !== "ADMIN") {
   window.location.href = "index.html";
@@ -7,6 +8,30 @@ if (!user || user.role !== "ADMIN") {
 function logout(){
   localStorage.removeItem("user");
   window.location.href = "index.html";
+}
+
+function typeClass(type) {
+  const value = (type || "MAIN").toLowerCase();
+
+  if (value.includes("side")) return "side";
+  if (value.includes("client")) return "client";
+  return "main";
+}
+
+function formatStatusLabel(status) {
+  return (status || "")
+    .toLowerCase()
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+const loggedUser = JSON.parse(localStorage.getItem("user"));
+
+if (loggedUser) {
+  const nameEl = document.getElementById("navUserName");
+  if (nameEl) {
+    nameEl.textContent = `Hi, ${loggedUser.name}`;  
+  }
 }
 
 document.addEventListener("DOMContentLoaded", function () {  
@@ -86,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  function selectUser(userId) {
+  async function selectUser(userId) {
 
     const user = users.find(u => u.id === userId);
     if (!user) return;
@@ -95,15 +120,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const dialogContent = document.getElementById("dialogContent");
 
-    dialogContent.innerHTML = `
-      ${renderTaskTable(user.tasks || [])}
-      ${renderBugTable(user.bugs || [])}
-    `;
+    try {
+      const res = await fetch(`http://localhost:8080/tasks/user/${userId}`);
+      const tasks = await res.json();
+      currentTasks = tasks;
+
+      dialogContent.innerHTML = renderTaskTable(tasks);
+
+    } catch (err) {
+      showToast("Error loading tasks", "error");
+      dialogContent.innerHTML = "<p>Failed to load tasks</p>";
+    }
 
     document.getElementById("adminDialog").classList.add("active");
   }
 
   function renderTaskTable(tasks) {
+
+    if (!tasks || tasks.length === 0) {
+      return `<p style="text-align:center;">No tasks found</p>`;
+    }
 
     return `
       <div class="card">
@@ -114,16 +150,28 @@ document.addEventListener("DOMContentLoaded", function () {
               <th>ID</th>
               <th>Title</th>
               <th>Status</th>
-              <th>Total Hours</th>
+              <th>Type</th>
+              <th>Planned</th>
+              <th>Actual</th>
             </tr>
           </thead>
           <tbody>
             ${tasks.map(task => `
-              <tr onclick="openAdminDetail(this,'task')">
+              <tr data-id="${task.id}" onclick="handleTaskClick(this)">
                 <td>#${task.id}</td>
                 <td>${task.title}</td>
-                <td><span class="status ${formatClass(task.status)}">${task.status}</span></td>
-                <td>${task.hours}</td>
+                <td>
+                  <span class="status ${formatClass(task.status)}">
+                    ${formatStatusLabel(task.status)}
+                  </span>
+                </td>
+                <td>
+                  <span class="type-pill ${typeClass(task.type)}">
+                    ${task.type || "MAIN"}
+                  </span>
+                </td>
+                <td>${task.plannedHours || 0}</td>
+                <td>${task.actualHours || 0}</td>
               </tr>
             `).join("")}
           </tbody>
@@ -131,6 +179,10 @@ document.addEventListener("DOMContentLoaded", function () {
       </div>
     `;
   }
+
+
+
+
 
   function renderBugTable(bugs) {
 
@@ -151,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
               <tr onclick="openAdminDetail(this,'bug')">
                 <td>#${bug.id}</td>
                 <td>${bug.title}</td>
-                <td><span class="status ${formatClass(bug.status)}">${bug.status}</span></td>
+                <td><span class="status ${formatClass(bug.status)}">${formatStatusLabel(bug.status)}</span></td>
                 <td><span class="priority ${bug.priority.toLowerCase()}">${bug.priority}</span></td>
               </tr>
             `).join("")}
@@ -350,6 +402,8 @@ window.openAdminDetail = function(row,type){
 
 }
 
+
+
 window.closeAdminDetail = function(){
 
   document.getElementById("adminDetailModal").classList.remove("active");
@@ -357,3 +411,84 @@ window.closeAdminDetail = function(){
 }
 
 });
+
+window.handleTaskClick = function(row) {
+  const id = parseInt(row.getAttribute("data-id"));
+  
+  const task = currentTasks.find(t => t.id === id);
+
+  if (!task) {
+    console.error("Task not found in currentTasks:", id);
+    return;
+  }
+
+  openTaskDetail(task);
+};
+
+window.openTaskDetail = function(task) {
+  const headerEl = document.getElementById("adminDetailTitle");
+  const idEl = document.getElementById("adminDId");
+  const titleEl = document.getElementById("adminDTitle");
+  const statusEl = document.getElementById("adminDStatus");
+  const hoursEl = document.getElementById("adminDHours");
+  const container = document.getElementById("detailContent");
+
+  if (titleEl) headerEl.innerText = "Task Details";
+  if (idEl) idEl.textContent = "#" + task.id;
+  if (titleEl) titleEl.textContent = task.title || "-";
+
+  if (statusEl) {
+    statusEl.textContent = formatStatusLabel(task.status);
+    statusEl.className = "status " + task.status.toLowerCase().replace(/\s+/g, "-");
+  }
+
+  if (hoursEl) {
+    hoursEl.textContent = `${task.plannedHours || 0} / ${task.actualHours || 0}`;
+  }
+
+  document.getElementById("adminHoursRow").style.display = "flex";
+
+  if (container) {
+    container.querySelectorAll(".extra-row").forEach(e => e.remove());
+    const extra = document.createElement("div");
+    extra.classList.add("extra-row");
+    extra.innerHTML = `
+      <div class="detail-row">
+        <span>Type</span>
+        <strong>
+          <span class="type-pill ${typeClass(task.type)}">
+            ${task.type || "MAIN"}
+          </span>
+        </strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Description</span>
+        <strong>${task.description || "-"}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Created</span>
+        <strong>${formatDate(task.createdTime)}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Start</span>
+        <strong>${formatDate(task.startTime)}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>End</span>
+        <strong>${formatDate(task.endTime)}</strong>
+      </div>
+    `;
+    container.appendChild(extra);
+  }
+
+  document.getElementById("adminDetailModal").classList.add("active");
+};
+
+function formatDate(date) {
+  if (!date) return "-";
+  return new Date(date).toLocaleString();
+}

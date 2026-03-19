@@ -9,6 +9,7 @@ const inputTitle = document.getElementById("inputTitle");
 const inputDesc = document.getElementById("inputDesc");
 const inputHours = document.getElementById("inputHours");
 const inputStatus = document.getElementById("inputStatus");
+const inputTaskType = document.getElementById("inputTaskType");
 
 const statusGroup = document.getElementById("statusGroup");
 
@@ -17,6 +18,17 @@ const hoursGroup = document.getElementById("hoursGroup");
 const priorityGroup = document.getElementById("priorityGroup");
 const inputPriority = document.getElementById("inputPriority");
 const user = JSON.parse(localStorage.getItem("user"));
+let tasks=[];
+let recentCreatedTaskType = null;
+
+const loggedUser = JSON.parse(localStorage.getItem("user"));
+
+if (loggedUser) {
+  const nameEl = document.getElementById("navUserName");
+  if (nameEl) {
+    nameEl.textContent = `Hi, ${loggedUser.name}`;  
+  }
+}
 
 if (!user) {
   window.location.href = "index.html";
@@ -24,13 +36,151 @@ if (!user) {
 
 let currentType = "task";
 let selectedTaskRow = null;
+let selectedTask = null;
 
+
+function renderTasks() {
+
+  const tbody = document.getElementById("taskTableBody");
+  const activeTasks = tasks
+    .filter(task => task.status !== "COMPLETED")
+    .sort((a, b) => {
+      const aInProgress = a.status === "IN_PROGRESS" ? 0 : 1;
+      const bInProgress = b.status === "IN_PROGRESS" ? 0 : 1;
+
+      return aInProgress - bInProgress;
+    });
+  const completedTasks = tasks.filter(task => task.status === "COMPLETED");
+
+  if (!tasks || tasks.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5">No tasks</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = activeTasks.map(task => `
+    <tr data-id="${task.id}">
+      <td>#${task.id}</td>
+
+      <td>${task.title}</td>
+
+      <td>
+        <span class="status ${statusClass(task.status)}">
+          ${formatStatusLabel(task.status)}
+        </span>
+      </td>
+
+      <td>
+        <span class="type-pill ${(task.type || "MAIN").toLowerCase()}">
+          ${task.type || "MAIN"}
+        </span>
+      </td>
+
+      <td>${task.plannedHours || 0}h</td>
+    </tr>
+  `).join("");
+
+  renderCompletedTasks(completedTasks);
+  attachTaskListeners();
+}
+
+function renderCompletedTasks(completedTasks) {
+
+  const container = document.getElementById("completedTasksContainer");
+
+  if (!container) return;
+
+  if (completedTasks.length === 0) {
+    container.innerHTML = "<li class='empty'>No completed tasks</li>";
+    return;
+  }
+
+  container.innerHTML = completedTasks.map(task => `
+    <li class="completed-item" onclick="openCompleted(${task.id})">
+      
+      <div class="completed-left">
+        <span class="completed-title">${task.title}</span>
+      </div>
+
+      <div class="completed-right">
+        <span class="completed-hours">${task.actualHours || 1}h</span>
+      </div>
+
+    </li>
+  `).join("");
+}
+function attachTaskListeners() {
+
+  document.querySelectorAll("#taskTableBody tr")
+    .forEach(row => {
+
+      row.addEventListener("click", function () {
+
+        const id = parseInt(this.getAttribute("data-id"));
+        const task = tasks.find(t => t.id === id);
+
+        if (!task) return;
+
+        openTaskDetail(task,"task");
+
+      });
+
+    });
+}
+
+async function loadTasks() {
+
+  try {
+
+    const res = await fetch(`http://localhost:8080/tasks/user/${user.id}`);
+    tasks = await res.json();
+
+    renderTasks();
+
+  } catch (err) {
+    console.error("Error loading tasks", err);
+    showToast("Failed to load tasks", "error");
+  }
+}
+
+function getTaskTypeFromModalType(type) {
+  if (type === "side") return "SIDE";
+  if (type === "client") return "CLIENT";
+  return "MAIN";
+}
+
+function normalizeStatus(status) {
+  return status.toUpperCase().replace(/\s+/g, "_");
+}
+
+function typeClass(type) {
+  const value = (type || "MAIN").toLowerCase();
+
+  if (value.includes("side")) return "side";
+  if (value.includes("client")) return "client";
+  return "main";
+}
+
+function typeLabel(type) {
+  const value = (type || "MAIN").toUpperCase();
+
+  if (value.includes("SIDE")) return "Side Task";
+  if (value.includes("CLIENT")) return "Client Task";
+  return "Main Task";
+}
+
+function formatStatusLabel(status) {
+  return (status || "")
+    .toLowerCase()
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
 
 function openModal(type) {
 
     currentType = type;
 
     document.getElementById("modalForm").reset();
+    inputTaskType.value = getTaskTypeFromModalType(type);
 
     let config = {
         title: "Create Task",
@@ -104,22 +254,54 @@ document.getElementById("modalForm").addEventListener("submit", function (e) {
         }
     }
 
-    addToTable(title, desc, hours);
-
-    closeModal();
+    addToTable(title, desc, hours, inputTaskType.value);
 });
 
 
 
-function addToTable(title, desc, hours) {
+async function addToTable(title, desc, hours, selectedType = "MAIN") {
 
-    if (currentType === "bug") {
-        addBug(title);
-    } else {
-        addTask(title, hours);
+  const typeMap = {
+    task: "MAIN",
+    side: "SIDE",
+    client: "CLIENT"
+  };
+
+  let type = selectedType || typeMap[currentType] || "MAIN";
+
+  console.log("Sending type:", type); // 🔥 DEBUG
+
+  try {
+
+    const res = await fetch("http://localhost:8080/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        title: title,
+        description: desc,
+        plannedHours: parseInt(hours),
+        type: type,
+        user: { id: user.id }
+      })
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(errorText || `Error creating ${typeLabel(type)}`);
     }
 
     showToast("Task Created Successfully 🎉", "success");
+
+    recentCreatedTaskType = type;
+    closeModal();
+    await loadTasks();
+
+  } catch (err) {
+    console.error(err);
+    showToast(err.message || `Error creating ${typeLabel(type)}`, "error");
+  }
 }
 
 let toastTimeout;
@@ -129,6 +311,20 @@ function showToast(message, type = "success") {
     const toast = document.getElementById("toast");
     const icon = document.getElementById("toastIcon");
     const text = document.getElementById("toastText");
+
+    const createdType =
+        inputTaskType?.value ||
+        getTaskTypeFromModalType(currentType) ||
+        recentCreatedTaskType;
+
+    if (
+        type === "success" &&
+        createdType &&
+        message.includes("Task Created Successfully")
+    ) {
+        message = `${typeLabel(createdType)} created successfully`;
+        recentCreatedTaskType = null;
+    }
 
     toast.className = "toast";
 
@@ -143,37 +339,6 @@ function showToast(message, type = "success") {
     setTimeout(() => {
         toast.classList.remove("show");
     }, 2200);
-}
-
-
-
-function addTask(title, hours) {
-
-    const table = document.querySelector("#taskTable tbody");
-
-    const status = inputStatus.value;
-
-    const id = Math.floor(Math.random() * 900 + 100);
-
-    let statusClass = "in-progress";
-
-    if (status === "Pending") statusClass = "pending";
-    if (status === "Completed") statusClass = "completed";
-
-    const row = document.createElement("tr");
-
-    row.innerHTML = `
-        <td>#${id}</td>
-        <td>${title}</td>
-        <td>
-            <span class="status ${statusClass}">
-                ${status}
-            </span>
-        </td>
-        <td>${hours}h</td>
-    `;
-
-    table.prepend(row);
 }
 
 function addBug(title) {
@@ -217,36 +382,68 @@ function addBug(title) {
     table.prepend(row);
 }
 
-function openDetail(row, type) {
-  selectedTaskRow = row;
-  const cells = row.children;
+function openTaskDetail(item, type = "task") {
 
-  document.getElementById("dId").textContent = cells[0].innerText;
-  document.getElementById("dTitle").textContent = cells[1].innerText;
-
-  const status = cells[2].innerText.trim();
   const completeBtn = document.querySelector(".complete-btn");
   const resolveBtn = document.querySelector(".resolve-btn");
+  const startBtn = document.querySelector(".start-btn");
+  const typeEl = document.getElementById("dType");
 
+  startBtn.style.display = "none";
   completeBtn.style.display = "none";
   resolveBtn.style.display = "none";
 
-  document.getElementById("dStatus").textContent = status;
-  document.getElementById("dStatus").className = "status " + statusClass(status);
+  selectedTask = item;
 
+  if (typeEl){
+    const type = item.type || "MAIN";
+    typeEl.textContent = type;
+    typeEl.className = "type-pill " + typeClass(type);
+  }
   if (type === "task") {
-    document.getElementById("detailTitle").textContent = "Task Details";
-    document.getElementById("dDesc").textContent = "Task description here...";
-    completeBtn.style.display = "block";
+    if(item.status === "PENDING"){
+        startBtn.style.display = "inline-block";
+    }
+    if(item.status === "IN_PROGRESS"){
+        completeBtn.style.display = "inline-block";
+    }
   }
 
   if (type === "bug") {
-    document.getElementById("detailTitle").textContent = "Bug Details";
-    document.getElementById("dDesc").textContent = "Bug description here...";
-    resolveBtn.style.display = "block";
+    resolveBtn.style.display = "inline-block";
   }
 
+  document.getElementById("dId").textContent = "#" + item.id;
+  document.getElementById("dTitle").textContent = item.title;
+  document.getElementById("dDesc").textContent = item.description || "-";
+
+  const statusEl = document.getElementById("dStatus");
+  statusEl.textContent = formatStatusLabel(item.status);
+  statusEl.className = "status " + statusClass(item.status);
+
   document.getElementById("detailModal").classList.add("show");
+}
+
+async function startTask() {
+
+  if (!selectedTask) return;
+
+  try {
+
+    await fetch(`http://localhost:8080/tasks/${selectedTask.id}/start`, {
+      method: "PUT"
+    });
+
+    showToast("Task started 🚀", "success");
+
+    closeDetail();
+
+    await loadTasks();
+
+  } catch (err) {
+    console.error(err);
+    showToast("Error starting task", "error");
+  }
 }
 
 function closeDetail() {
@@ -266,19 +463,22 @@ function statusClass(status) {
   return "";
 }
 
-function openCompleted(item) {
+window.openCompleted = function(taskId) {
 
-  const title = item.querySelector("span").innerText;
-  const hours = item.querySelector("small").innerText;
+  const task = tasks.find(t => t.id === taskId);
+  if (!task) return;
 
-  document.getElementById("cId").textContent = "#C" + Math.floor(Math.random()*1000);
-  document.getElementById("cTitle").textContent = title;
-  document.getElementById("cDesc").textContent = "Task successfully completed.";
-  document.getElementById("cPlan").textContent = hours;
-  document.getElementById("cActual").textContent = hours;
+  document.getElementById("cId").textContent = "#" + task.id;
+  document.getElementById("cType").textContent = task.type || "MAIN";
+  document.getElementById("cType").className =
+    "type-pill " + typeClass(task.type);
+  document.getElementById("cTitle").textContent = task.title;
+  document.getElementById("cDesc").textContent = task.description || "-";
+  document.getElementById("cPlan").textContent = (task.plannedHours || 0) + "h";
+  document.getElementById("cActual").textContent = (task.actualHours || 1) + "h";
 
   document.getElementById("completedModal").classList.add("show");
-}
+};
 
 function closeCompleted() {
   document.getElementById("completedModal").classList.remove("show");
@@ -305,33 +505,26 @@ document.querySelectorAll(".modal-overlay").forEach(overlay => {
     });
 });
 
-function markComplete() {
+async function markComplete() {
 
-    if (!selectedTaskRow) return;
+  if (!selectedTask) return;
 
-    const title = selectedTaskRow.children[1].innerText;
-    const hours = selectedTaskRow.children[3].innerText;
+  try {
 
-    selectedTaskRow.remove();
+    await fetch(`http://localhost:8080/tasks/${selectedTask.id}/complete`, {
+      method: "PUT"
+    });
 
-    const completedList = document.querySelector(".completed-list");
-
-    const li = document.createElement("li");
-
-    li.setAttribute("onclick", "openCompleted(this)");
-
-    li.innerHTML = `
-        <span>${title}</span>
-        <small>${hours}</small>
-    `;
-
-    completedList.prepend(li);
+    showToast("Task marked as completed 🔥", "success");
 
     closeDetail();
-    selectedTaskRow = null;
 
-    showToast("Task marked as complete", "success");
+    await loadTasks(); // 🔥 refresh UI
 
+  } catch (err) {
+    console.error(err);
+    showToast("Error completing task", "error");
+  }
 }
 
 function markResolved() {
@@ -350,6 +543,8 @@ function markResolved() {
     showToast("Bug resolved", "bug");
 
 }
+
+loadTasks();
 
 function logout(){
   localStorage.removeItem("user");
